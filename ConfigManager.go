@@ -1,9 +1,12 @@
-package implementation
+package gonfig
 
-import "github.com/Aranyak-Ghosh/gonfig/types"
+import (
+	golist "github.com/Aranyak-Ghosh/golist/implementations"
+	"github.com/Aranyak-Ghosh/gonfig/types"
+)
 
 type configManager struct {
-	providers []types.Provider
+	providers golist.List[types.Provider]
 	config    any
 }
 
