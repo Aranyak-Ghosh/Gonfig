@@ -7,9 +7,10 @@ const (
 	DotEnv
 	YAML
 	JSON
+	INI
+	TOML
 )
 
-type Provider struct {
-	Type     SourceType
-	FilePath string
+type Provider interface {
+	Load(map[string]interface{}) error
 }
