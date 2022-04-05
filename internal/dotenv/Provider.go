@@ -13,7 +13,6 @@ import (
 
 type dotEnvProvider struct {
 	fileName string
-	filePath string
 }
 
 var _ types.Provider = (*dotEnvProvider)(nil)
@@ -26,10 +25,9 @@ func isNullOrEmpty(str string) bool {
 }
 
 func (de *dotEnvProvider) Load(data map[string]interface{}) error {
-	path := string(append([]byte(de.filePath), de.fileName...))
 
-	if !isNullOrEmpty(path) {
-		if err := godotenv.Load(path); err != nil {
+	if !isNullOrEmpty(de.fileName) {
+		if err := godotenv.Load(de.fileName); err != nil {
 			return err
 		}
 	} else {
@@ -93,9 +91,9 @@ func isMap(v interface{}) bool {
 	return reflect.TypeOf(v).Kind() == reflect.Map
 }
 
-func NewDotEnvProvider(fileName string, filePath string) types.Provider {
+// Pass an empty string to load default env file
+func NewDotEnvProvider(fileName string) types.Provider {
 	return &dotEnvProvider{
 		fileName: fileName,
-		filePath: filePath,
 	}
 }

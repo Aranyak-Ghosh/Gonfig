@@ -3,7 +3,7 @@ package dotenv
 import "testing"
 
 func Test_LoadDefaultEnv(t *testing.T) {
-	provider := NewDotEnvProvider("", "")
+	provider := NewDotEnvProvider("")
 
 	if provider == nil {
 		t.Error("provider is nil")
@@ -19,7 +19,7 @@ func Test_LoadDefaultEnv(t *testing.T) {
 }
 
 func Test_LoadSpecificEnv(t *testing.T) {
-	provider := NewDotEnvProvider(".env.named", "")
+	provider := NewDotEnvProvider(".env.named")
 
 	if provider == nil {
 		t.Error("provider is nil")
