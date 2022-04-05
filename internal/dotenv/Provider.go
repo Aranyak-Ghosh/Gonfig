@@ -3,8 +3,10 @@ package dotenv
 import (
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 
+	"github.com/Aranyak-Ghosh/golist"
 	"github.com/Aranyak-Ghosh/gonfig/types"
 	"github.com/joho/godotenv"
 )
@@ -40,10 +42,8 @@ func (de *dotEnvProvider) Load(data map[string]interface{}) error {
 	for _, d := range rawData {
 		vars := strings.Split(d, "=")
 
-		if len(vars) == 2 {
-			handleNesting(vars[0], vars[1], data)
-		} else if len(vars) > 2 {
-			handleNesting(vars[0], strings.Join(vars[1:], separator), data)
+		if len(vars) >= 2 {
+			handleKeyNesting(vars[0], strings.Join(vars[1:], separator), data)
 		}
 
 	}
@@ -51,28 +51,46 @@ func (de *dotEnvProvider) Load(data map[string]interface{}) error {
 	return nil
 }
 
-func handleNesting(key string, val string, dat map[string]interface{}) {
+func handleKeyNesting(key string, val string, dat any) {
+	isDataMap := isMap(dat)
+	if isDataMap {
+		handleKeyNestingForMap(key, val, dat.(map[string]any))
+	} else {
+		handleKeyNestingForSlice(key, val, dat.(*golist.List[any]))
+	}
+}
+
+func handleKeyNestingForMap(key, val string, dat map[string]any) {
 	var nestedKeys = strings.Split(key, separator)
 
 	if len(nestedKeys) > 1 {
-		if v, ok := dat[nestedKeys[0]]; !ok {
-			dat[nestedKeys[0]] = make(map[string]interface{})
-		} else {
-			inType := reflect.TypeOf(v)
-
-			if inType.Kind() != reflect.Map {
-				dat[nestedKeys[0]] = make(map[string]interface{})
+		if _, ok := dat[nestedKeys[0]]; !ok {
+			if _, err := strconv.Atoi(nestedKeys[1]); err != nil {
+				dat[nestedKeys[0]] = make(map[string]any)
+			} else {
+				dat[nestedKeys[0]] = new(golist.List[any])
 			}
 		}
-		handleNesting(strings.Join(nestedKeys[1:], separator), val, dat[nestedKeys[0]].(map[string]interface{}))
+		handleKeyNesting(strings.Join(nestedKeys[1:], separator), val, dat[nestedKeys[0]])
 	} else {
-		spl := strings.Split(val, separator)
-		if len(spl) > 1 {
-			dat[key] = spl
-		} else {
-			dat[key] = spl[0]
-		}
+		dat[key] = val
 	}
+}
+
+func handleKeyNestingForSlice(key, val string, dat *golist.List[any]) {
+	var nestedKeys = strings.Split(key, separator)
+
+	if len(nestedKeys) == 1 {
+		dat.Append(val)
+	} else {
+		nestedVal := make(map[string]any)
+		handleKeyNesting(strings.Join(nestedKeys[1:], separator), val, nestedVal)
+		dat.Append(nestedVal)
+	}
+}
+
+func isMap(v interface{}) bool {
+	return reflect.TypeOf(v).Kind() == reflect.Map
 }
 
 func NewDotEnvProvider(fileName string, filePath string) types.Provider {
