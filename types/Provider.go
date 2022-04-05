@@ -3,12 +3,12 @@ package types
 type SourceType int
 
 const (
-	ENV SourceType = iota
-	DotEnv
+	DotEnv SourceType = iota
 	YAML
 	JSON
 	INI
 	TOML
+	HCL
 )
 
 type Provider interface {
