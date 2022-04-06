@@ -24,7 +24,7 @@ func isNullOrEmpty(str string) bool {
 	return strings.Trim(str, blank) == ""
 }
 
-func (de *dotEnvProvider) Load(data map[string]interface{}) error {
+func (de *dotEnvProvider) Load(data map[string]any) error {
 
 	if !isNullOrEmpty(de.fileName) {
 		if err := godotenv.Load(de.fileName); err != nil {
@@ -87,7 +87,7 @@ func handleKeyNestingForSlice(key, val string, dat *golist.List[any]) {
 	}
 }
 
-func isMap(v interface{}) bool {
+func isMap(v any) bool {
 	return reflect.TypeOf(v).Kind() == reflect.Map
 }
 

@@ -7,7 +7,7 @@ func Test_YamlFileConfig(t *testing.T) {
 
 	js := NewYamlFileProvider(file)
 
-	dat := make(map[string]interface{})
+	dat := make(map[string]any)
 
 	js.Load(dat)
 

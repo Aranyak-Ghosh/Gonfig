@@ -13,8 +13,8 @@ import (
 )
 
 type configManager struct {
-	providers golist.List[types.Provider]
-	config    map[string]interface{}
+	providers *golist.List[types.Provider]
+	config    map[string]any
 }
 
 const (
@@ -82,7 +82,7 @@ func (cm *configManager) GetConfig(key string) (any, error) {
 }
 func (cm *configManager) ReloadConfig() error {
 	var e error = nil
-	for _, val := range cm.providers {
+	for _, val := range *cm.providers {
 		err := cm.loadProvider(val)
 		if err != nil {
 			e = fmt.Errorf("%w", err)
@@ -94,6 +94,13 @@ func (cm *configManager) ReloadConfig() error {
 	return e
 }
 
+func NewConfigManager() *configManager {
+	return &configManager{
+		providers: new(golist.List[types.Provider]),
+		config:    make(map[string]any),
+	}
+}
+
 var blankString = " \t\r\n"
 
 func isNullOrEmpty(data string) bool {
@@ -102,7 +109,7 @@ func isNullOrEmpty(data string) bool {
 
 func (cm *configManager) loadProvider(pr types.Provider) error {
 	if cm.config == nil {
-		cm.config = make(map[string]interface{})
+		cm.config = make(map[string]any)
 	}
 	err := pr.Load(cm.config)
 	if err != nil {

@@ -48,7 +48,7 @@ func isValidJson(data []byte) jsonType {
 	}
 }
 
-func (jp *jsonFileProvider) Load(res map[string]interface{}) error {
+func (jp *jsonFileProvider) Load(res map[string]any) error {
 
 	if !isNullOrEmpty(jp.fileName) {
 		if data, err := ioutil.ReadFile(jp.fileName); err != nil {
@@ -69,7 +69,7 @@ func (jp *jsonFileProvider) Load(res map[string]interface{}) error {
 	return nil
 }
 
-func (jp *jsonStringProvider) Load(res map[string]interface{}) error {
+func (jp *jsonStringProvider) Load(res map[string]any) error {
 
 	if !isNullOrEmpty(jp.serializedJson) {
 		data := []byte(jp.serializedJson)

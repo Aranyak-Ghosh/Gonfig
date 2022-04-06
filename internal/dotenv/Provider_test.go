@@ -9,7 +9,7 @@ func Test_LoadDefaultEnv(t *testing.T) {
 		t.Error("provider is nil")
 	}
 
-	mapData := make(map[string]interface{})
+	mapData := make(map[string]any)
 
 	if err := provider.Load(mapData); err != nil {
 		t.Errorf("error loading data: %s", err)
@@ -25,7 +25,7 @@ func Test_LoadSpecificEnv(t *testing.T) {
 		t.Error("provider is nil")
 	}
 
-	mapData := make(map[string]interface{})
+	mapData := make(map[string]any)
 
 	if err := provider.Load(mapData); err != nil {
 		t.Errorf("error loading data: %s", err)

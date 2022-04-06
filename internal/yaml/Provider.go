@@ -21,7 +21,7 @@ func isNullOrEmpty(str string) bool {
 	return strings.Trim(str, blank) == ""
 }
 
-func (yp *yamlProvider) Load(res map[string]interface{}) error {
+func (yp *yamlProvider) Load(res map[string]any) error {
 	if !isNullOrEmpty(yp.fileName) {
 		if data, err := ioutil.ReadFile(yp.fileName); err != nil {
 			return err

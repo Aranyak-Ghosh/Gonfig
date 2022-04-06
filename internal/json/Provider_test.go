@@ -7,7 +7,7 @@ func Test_JsonFileConfig(t *testing.T) {
 
 	js := NewJsonFileProvider(file)
 
-	dat := make(map[string]interface{})
+	dat := make(map[string]any)
 
 	js.Load(dat)
 
@@ -21,7 +21,7 @@ func Test_JsonStringConfig(t *testing.T) {
 
 	js := NewJsonStringProvider(data)
 
-	dat := make(map[string]interface{})
+	dat := make(map[string]any)
 
 	js.Load(dat)
 
