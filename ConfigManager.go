@@ -8,6 +8,7 @@ import (
 	"github.com/Aranyak-Ghosh/gonfig/internal/dotenv"
 	"github.com/Aranyak-Ghosh/gonfig/internal/json"
 	"github.com/Aranyak-Ghosh/gonfig/internal/yaml"
+	"github.com/mitchellh/mapstructure"
 
 	"github.com/Aranyak-Ghosh/gonfig/types"
 )
@@ -37,6 +38,7 @@ type Provider struct {
 type ConfigManager interface {
 	AddProvider(provider Provider) error
 	GetConfig(string) (any, error)
+	MapConfig(string, any) error
 	ReloadConfig() error
 }
 
@@ -69,16 +71,28 @@ func (cm *configManager) AddProvider(provider Provider) error {
 }
 func (cm *configManager) GetConfig(key string) (any, error) {
 	keys := strings.Split(key, separator)
-	var res any
+	var res any = cm.config
 	var ok bool
 	for _, k := range keys {
-		res, ok = cm.config[k]
+		res, ok = res.(map[string]any)[k]
 		if !ok {
 			return nil, fmt.Errorf("Key not found")
 		}
 	}
 
 	return res, nil
+}
+func (cm *configManager) MapConfig(key string, out any) error {
+	keys := strings.Split(key, separator)
+	var res any = cm.config
+	var ok bool
+	for _, k := range keys {
+		res, ok = res.(map[string]any)[k]
+		if !ok {
+			return fmt.Errorf("Key not found")
+		}
+	}
+	return mapstructure.Decode(res, &out)
 }
 func (cm *configManager) ReloadConfig() error {
 	var e error = nil
