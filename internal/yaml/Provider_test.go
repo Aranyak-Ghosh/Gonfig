@@ -5,7 +5,7 @@ import "testing"
 func Test_YamlFileConfig(t *testing.T) {
 	file := "config.yaml"
 
-	js := NewYamlProvider(file)
+	js := NewYamlFileProvider(file)
 
 	dat := make(map[string]interface{})
 

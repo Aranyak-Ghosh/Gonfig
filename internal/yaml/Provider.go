@@ -9,7 +9,8 @@ import (
 )
 
 type yamlProvider struct {
-	fileName string
+	fileName    string
+	fileContent string
 }
 
 var _ types.Provider = (*yamlProvider)(nil)
@@ -30,13 +31,23 @@ func (yp *yamlProvider) Load(res map[string]interface{}) error {
 				return err
 			}
 		}
-
+	} else if !isNullOrEmpty(yp.fileContent) {
+		err := yaml.Unmarshal([]byte(yp.fileContent), &res)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func NewYamlProvider(filename string) types.Provider {
+func NewYamlFileProvider(filename string) types.Provider {
 	return &yamlProvider{
 		fileName: filename,
+	}
+}
+
+func NewYamlStringProvider(content string) types.Provider {
+	return &yamlProvider{
+		fileContent: content,
 	}
 }
