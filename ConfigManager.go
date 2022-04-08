@@ -108,7 +108,7 @@ func (cm *configManager) ReloadConfig() error {
 	return e
 }
 
-func NewConfigManager() *configManager {
+func NewConfigManager() ConfigManager {
 	return &configManager{
 		providers: new(golist.List[types.Provider]),
 		config:    make(map[string]any),
